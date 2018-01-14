@@ -1,11 +1,17 @@
 var fs = require('fs');
-fs.readdir('./', function(err, data) {
-    console.log(data);
-    fs.writeFile('../fold', function(err) {
-        if (err) throw err;
-        fs.readdir('../fold', function(err, data) {
-            console.log('Dane po zapisie'.blue)
-            console.log(data);
-        });
-    });
+var EventEmitter = require('events').EventEmitter;
+
+var emitter = new EventEmitter();
+
+fs.readdir('./', function(err, files) {
+	if (err) throw err;
+	console.log(files)
+	emitter.emit('saveDir', files);
+});
+
+emitter.on('saveDir', function(files) {
+	fs.writeFile('./txt', files, function(err) {
+		if (err) throw err;
+		console.log('Zapisano!');
+	});
 });
